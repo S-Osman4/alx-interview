@@ -1,29 +1,36 @@
 #!/usr/bin/python3
 '''Module for log parsing script.'''
+
 import sys
 
-if __name__ == "__main__":
-    total_size = 0
-    count = 1
-    codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+total_size = 0
+status_codes = {
+    200: 0,
+    301: 0,
+    400: 0,
+    401: 0,
+    403: 0,
+    404: 0,
+    405: 0,
+    500: 0
+}
 
-    def print_statistics():
-        print("File size: {}".format(total_size))
-        for key, value in sorted(codes.items()):
-            if (value):
-                print("{}: {}".format(key, value))
-
-    try:
-        for line in sys.stdin:
-            tokens = line.split(" ")
-            total_size += int(tokens[-1])
-            code = int(tokens[-2])
-            if code in codes:
-                codes[code] += 1
-            if count % 10 == 0:
-                print_statistics()
-            count += 1
-    except Exception:
-        pass
-    finally:
-        print_statistics()
+try:
+    line_count = 0
+    for line in sys.stdin:
+        line_count += 1
+        parts = line.split(" ")
+        if len(parts) != 9:
+            continue
+        ip, date, request, status_code, size = parts[0], parts[3], parts[5], int(parts[8]), int(parts[9])
+        if status_code in status_codes:
+            status_codes[status_code] += 1
+        total_size += size
+        if line_count % 10 == 0:
+            print("Total file size: ", total_size)
+            for key in sorted(status_codes.keys()):
+                print(key, ": ", status_codes[key])
+except KeyboardInterrupt:
+    print("Total file size: ", total_size)
+    for key in sorted(status_codes.keys()):
+        print(key, ": ", status_codes[key])

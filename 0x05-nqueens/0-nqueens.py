@@ -1,80 +1,51 @@
 #!/usr/bin/python3
-"""
-The N queens puzzle is the challenge of placing N non-attacking queens
-on an NxN chessboard. Write a program that solves the N queens problem.
-    Usage: nqueens N
-        If the user called the program with the wrong number of arguments,
-        print Usage: nqueens N, followed by a new line,
-        and exit with the status 1
-    where N must be an integer greater or equal to 4
-        If N is not an integer, print N must be a number,
-        followed by a new line, and exit with the status 1.
-        If N is smaller than 4, print N must be at least 4,
-        followed by a new line, and exit with the status 1.
-    The program should print every possible solution to the problem
-        One solution per line
-        Format: see example
-        You don't have to print the solutions in a specific order
-    You are only allowed to import the sys module
-"""
-import sys
+"""program that solves the N queens problem."""
+from sys import argv, exit
 
 
-if len(sys.argv) < 2:
-    print("Usage: nqueens N")
-    sys.exit(1)
+if len(argv) != 2:
+   print("Usage: nqueens N")
+   exit(1)
+
+N = argv[1]
 
 try:
-    num = int(sys.argv[1])
+    N = int(N)
 except ValueError:
     print("N must be a number")
-    sys.exit(1)
+    exit(1)
 
-if num < 4:
+if N < 4:
     print("N must be at least 4")
-    sys.exit(1)
+    exit(1)
+
+solution = []
 
 
-def solveNQueens(n):
-    """
-    Places N non-attacking queens on an NxN chessboard.
-    """
-    col, pos, neg = set(), set(), set()
-    current_board = [[] for n in range(n)]
-    solved_board = []
-
-    def backtrack(row):
-        """
-        Tool for solving constraint satisfaction problems.
-        """
-        if row == n:
-            copy = current_board.copy()
-            solved_board.append(copy)
-            return
-
-        for c in range(n):
-            if c in col or (row + c) in pos or (row - c) in neg:
-                continue
-
-            col.add(c)
-            pos.add(row + c)
-            neg.add(row - c)
-
-            current_board[row] = [row, c]
-
-            backtrack(row + 1)
-
-            col.remove(c)
-            pos.remove(row + c)
-            neg.remove(row - c)
-            current_board[row] = []
-
-    backtrack(0)
-
-    return solved_board
+def nqueens(row, N, solution):
+    """The program should print any possible solution"""
+    if (row == N):
+        print(solution)
+    else:
+        for col in range(N):
+            position = [row, col]
+            if validposition(solution, position):
+                solution.append(position)
+                nqueens(row + 1, N, solution)
+                solution.remove(position)
 
 
-if __name__ == "__main__":
-    boards = solveNQueens(num)
-    for board in boards:
-        print(board) 
+def validposition(solution, position):
+    """validate horizontal and diagonal position of queens"""
+    for queen in solution:
+        if queen[1] == position[1]:
+            return False
+        # descending diagonal
+        if (queen[0] - queen[1]) == (position[0] - position[1]):
+            return False
+        # ascending diagonal
+        if (queen[0] + queen[1]) == (position[0] + position[1]):
+            return False
+    return True
+
+nqueens(0, N, solution)

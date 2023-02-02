@@ -1,20 +1,3 @@
-Skip to content
-getdaniel
-/
-alx-interview
-Public
-Code
-Issues
-Pull requests
-Actions
-Projects
-Security
-Insights
-alx-interview/0x05-nqueens/0-nqueens.py
-
-Me N Queens
- 0 contributors
-Executable File  143 lines (120 sloc)  3.86 KB
 #!/usr/bin/python3
 # 0-nqueens.py
 """Solves the N-queens puzzle.
@@ -150,18 +133,3 @@ if __name__ == "__main__":
     solutions = recursive_solve(board, 0, 0, [])
     for sol in solutions:
         print(sol)
-Footer
-© 2023 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-alx-interview/0-nqueens.py at main · getdaniel/alx-interview

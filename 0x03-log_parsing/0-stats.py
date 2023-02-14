@@ -1,36 +1,57 @@
 #!/usr/bin/python3
-'''Module for log parsing script.'''
-
+"""
+Python script takes URL from stdin and compute exact metrics
+"""
+import re
 import sys
 
-total_size = 0
-status_codes = {
-    200: 0,
-    301: 0,
-    400: 0,
-    401: 0,
-    403: 0,
-    404: 0,
-    405: 0,
-    500: 0
-}
 
-try:
-    line_count = 0
-    for line in sys.stdin:
-        line_count += 1
-        parts = line.split(" ")
-        if len(parts) != 9:
-            continue
-        ip, date, request, status_code, size = parts[0], parts[3], parts[5], int(parts[8]), int(parts[9])
-        if status_code in status_codes:
-            status_codes[status_code] += 1
-        total_size += size
-        if line_count % 10 == 0:
-            print("Total file size: ", total_size)
-            for key in sorted(status_codes.keys()):
-                print(key, ": ", status_codes[key])
-except KeyboardInterrupt:
-    print("Total file size: ", total_size)
-    for key in sorted(status_codes.keys()):
-        print(key, ": ", status_codes[key])
+def print_log_parsing(CODES, file_size):
+    """
+    function that print parsing logs
+    args:
+        codes: is a dictionary of status code
+        file_size: is the size of status
+    """
+    print("File size: {}".format(file_size))
+    for key, value in sorted(CODES.items()):
+        print("{}: {}".format(key, value))
+
+
+def run():
+    """"
+    function that search the status code and size number
+    """
+    PATTERN = '([\\d]{3})\\s([\\d]{1,4})$'
+    CODES = {}
+    STOP = 10
+    step = 1
+    size = 0
+
+    while True:
+
+        try:
+            line = input()
+
+            status, file_size = re.search(PATTERN, line).group().split()
+
+            size += int(file_size)
+
+            try:
+                if CODES[status]:
+                    CODES[status] += 1
+            except KeyError:
+                CODES[status] = 1
+
+            if step == STOP:
+                print_log_parsing(CODES, size)
+                step = 1
+
+            step += 1
+        except (KeyboardInterrupt, EOFError):
+            print_log_parsing(CODES, size)
+            exit()
+
+
+if __name__ == '__main__':
+    run()

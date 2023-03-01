@@ -1,8 +1,12 @@
 #!/usr/bin/python3
-def island_perimeter(grid):
-    """
+"""
+Island perimeter:
     Returns the perimeter of the island described in grid.
-    """
+"""
+
+
+def island_perimeter(grid):
+
     if not grid or not grid[0]:
         return 0
 
